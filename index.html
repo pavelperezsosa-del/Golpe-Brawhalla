@@ -121,6 +121,48 @@
       text-shadow: 0 0 10px rgba(56, 189, 248, 0.8), 0 0 20px rgba(56, 189, 248, 0.4);
     }
 
+    /* Tarjetas de Podio / Top 3 Resumen */
+    .podium-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .podium-card {
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid #475569;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    }
+
+    .podium-card h3 {
+      color: #f1c40f;
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #475569;
+      padding-bottom: 5px;
+      text-shadow: 0 0 8px rgba(241,196,15,0.6);
+    }
+
+    .podium-list {
+      list-style: none;
+    }
+
+    .podium-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-size: 0.9rem;
+    }
+
+    .podium-item:last-child {
+      border-bottom: none;
+    }
+
     /* Filtros y Formularios */
     .filter-bar {
       display: flex;
@@ -528,6 +570,22 @@
     <section id="ranking" class="tab-content active">
       <h2 class="section-title">Tabla de Clasificación por Mes</h2>
       
+      <!-- Panel de Podios / Top 3 Resumen -->
+      <div class="podium-container">
+        <div class="podium-card">
+          <h3>🥇 Top 3 del Mes Actual</h3>
+          <ul class="podium-list" id="podiumMes"></ul>
+        </div>
+        <div class="podium-card">
+          <h3>🏆 Top 3 Histórico General</h3>
+          <ul class="podium-list" id="podiumHistorico"></ul>
+        </div>
+        <div class="podium-card">
+          <h3>⚔️ Top 3 Últimos Torneos</h3>
+          <ul class="podium-list" id="podiumTorneos"></ul>
+        </div>
+      </div>
+
       <div class="filter-bar">
         <label for="rankingMonthFilter">Filtrar Ranking por Mes/Año:</label>
         <input type="month" id="rankingMonthFilter" value="2026-07" onchange="renderRanking(); renderHistory();">
@@ -538,10 +596,10 @@
           <tr>
             <th>Posición</th>
             <th>Jugador</th>
-            <th>Puntos Ranking</th>
+            <th>Puntos Ranking (Manos Ganadas)</th>
             <th>Partidas Jugadas</th>
-            <th>Victorias</th>
-            <th>Derrotas</th>
+            <th>Manos Ganadas</th>
+            <th>Manos Perdidas</th>
           </tr>
         </thead>
         <tbody id="rankingTableBody"></tbody>
@@ -807,11 +865,8 @@
       renderHistory();
     }
 
-    function renderRanking() {
-      const selectedMonth = document.getElementById('rankingMonthFilter').value;
-      const monthKey = `brawlhalla_history_${selectedMonth}`;
-      const historyData = JSON.parse(localStorage.getItem(monthKey)) || [];
-
+    // Función auxiliar para calcular estadísticas a partir de un listado de partidas
+    function calculateStats(historyData) {
       const stats = {};
       players.forEach(p => {
         stats[p.name] = { name: p.name, points: 0, played: 0, wins: 0, losses: 0, active: p.active };
@@ -823,19 +878,35 @@
 
         stats[m.winner].wins += 1;
         stats[m.winner].played += 1;
-        stats[m.winner].points += m.winnerScore;
+        stats[m.winner].points += m.winnerScore; // 1 punto por cada mano ganada
 
         stats[m.loser].losses += 1;
         stats[m.loser].played += 1;
-        stats[m.loser].points += m.loserScore;
+        stats[m.loser].points += m.loserScore; // 1 punto por cada mano ganada por el perdedor
       });
 
-      const sorted = Object.values(stats).sort((a, b) => b.points - a.points || b.wins - a.wins);
+      // Ordenar aplicando criterio de desempate:
+      // 1. Mayor cantidad de puntos (manos ganadas)
+      // 2. Menor cantidad de derrotas (manos perdidas / encajadas)
+      return Object.values(stats).sort((a, b) => {
+        if (b.points !== a.points) {
+          return b.points - a.points; // Más puntos primero
+        }
+        return a.losses - b.losses; // Menos derrotas primero en caso de empate de puntos
+      });
+    }
 
+    function renderRanking() {
+      const selectedMonth = document.getElementById('rankingMonthFilter').value;
+      const monthKey = `brawlhalla_history_${selectedMonth}`;
+      const historyData = JSON.parse(localStorage.getItem(monthKey)) || [];
+
+      // 1. Renderizar Tabla Principal del Mes Seleccionado con criterio de desempate actualizado
+      const sortedCurrent = calculateStats(historyData);
       const tbody = document.getElementById('rankingTableBody');
       tbody.innerHTML = '';
 
-      sorted.forEach((p, idx) => {
+      sortedCurrent.forEach((p, idx) => {
         const tr = document.createElement('tr');
         let rankClass = idx === 0 ? 'rank-1' : idx === 1 ? 'rank-2' : idx === 2 ? 'rank-3' : '';
         const inactivoLabel = !p.active ? ' <small style="color:#ef4444;">(Inactivo)</small>' : '';
@@ -850,6 +921,52 @@
         `;
         tbody.appendChild(tr);
       });
+
+      // 2. Renderizar Top 3 del Mes Actual
+      renderPodiumList('podiumMes', sortedCurrent.slice(0, 3));
+
+      // 3. Renderizar Top 3 Histórico General (Agregando todas las partidas de localStorage)
+      let allHistory = [];
+      Object.keys(localStorage).forEach(key => {
+        if (key.startsWith('brawlhalla_history_')) {
+          const monthData = JSON.parse(localStorage.getItem(key)) || [];
+          allHistory = allHistory.concat(monthData);
+        }
+      });
+      const sortedHistorical = calculateStats(allHistory);
+      renderPodiumList('podiumHistorico', sortedHistorical.slice(0, 3));
+
+      // 4. Renderizar Top 3 Últimos Torneos (Filtrando solo partidas de tipo 'Torneo')
+      const tournamentHistory = allHistory.filter(m => m.type === 'Torneo');
+      const sortedTournaments = calculateStats(tournamentHistory);
+      renderPodiumList('podiumTorneos', sortedTournaments.slice(0, 3));
+    }
+
+    function renderPodiumList(elementId, topList) {
+      const ul = document.getElementById(elementId);
+      ul.innerHTML = '';
+
+      if (topList.length === 0 || topList.every(p => p.points === 0)) {
+        ul.innerHTML = '<li class="podium-item" style="color:#94a3b8;">Sin registros suficientes</li>';
+        return;
+      }
+
+      topList.forEach((p, idx) => {
+        if (p.points > 0) {
+          const medals = ['🥇', '🥈', '🥉'];
+          const li = document.createElement('li');
+          li.className = 'podium-item';
+          li.innerHTML = `
+            <span>${medals[idx]} <strong>${p.name}</strong></span>
+            <span style="color: #f1c40f; font-weight: bold;">${p.points} pts (${p.losses} der)</span>
+          `;
+          ul.appendChild(li);
+        }
+      });
+
+      if (ul.children.length === 0) {
+        ul.innerHTML = '<li class="podium-item" style="color:#94a3b8;">Sin registros suficientes</li>';
+      }
     }
 
     function renderBracket() {
@@ -934,7 +1051,7 @@
       const list = document.getElementById('historyList');
       list.innerHTML = '';
 
-      if (historyData.length === 0) {
+      if (historyData.length ===0) {
         list.innerHTML = '<li style="color:#94a3b8;">No hay partidas confirmadas para este mes.</li>';
         return;
       }
