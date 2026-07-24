@@ -9,7 +9,7 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Brawlhalla', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
     body, html {
@@ -46,11 +46,11 @@
     }
 
     header h1 {
-      font-size: 2.5rem;
+      font-size: 2.8rem;
       text-transform: uppercase;
       letter-spacing: 3px;
       color: #f1c40f;
-      text-shadow: 0 0 10px rgba(241, 196, 15, 0.5), 2px 2px 4px #000;
+      text-shadow: 0 0 15px rgba(241, 196, 15, 0.9), 0 0 30px rgba(241, 196, 15, 0.6), 2px 2px 4px #000;
     }
 
     /* Navegación por pestañas */
@@ -79,14 +79,14 @@
       background: #e2a21e;
       color: #0f111a;
       border-color: #f1c40f;
-      box-shadow: 0 0 12px rgba(226, 162, 30, 0.6);
+      box-shadow: 0 0 15px rgba(241, 196, 15, 0.9), 0 0 25px rgba(226, 162, 30, 0.6);
     }
 
     .nav-btn.active {
       background: #f1c40f;
       color: #0f111a;
       border-color: #ffffff;
-      box-shadow: 0 0 15px rgba(241, 196, 15, 0.8);
+      box-shadow: 0 0 18px rgba(241, 196, 15, 1), 0 0 30px rgba(241, 196, 15, 0.8);
     }
 
     /* Contenedor Principal */
@@ -118,6 +118,7 @@
       border-bottom: 2px solid #38bdf8;
       padding-bottom: 6px;
       display: inline-block;
+      text-shadow: 0 0 10px rgba(56, 189, 248, 0.8), 0 0 20px rgba(56, 189, 248, 0.4);
     }
 
     /* Filtros y Formularios */
@@ -150,7 +151,7 @@
 
     select:focus, input:focus {
       border-color: #38bdf8;
-      box-shadow: 0 0 8px rgba(56, 189, 248, 0.5);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.8);
     }
 
     .btn-action {
@@ -162,10 +163,12 @@
       border-radius: 6px;
       cursor: pointer;
       transition: background 0.2s ease;
+      box-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
     }
 
     .btn-action:hover {
       background: #16a34a;
+      box-shadow: 0 0 15px rgba(34, 197, 94, 0.9);
     }
 
     .btn-delete {
@@ -182,6 +185,7 @@
 
     .btn-delete:hover {
       background: #dc2626;
+      box-shadow: 0 0 8px rgba(239, 68, 68, 0.8);
     }
 
     /* Modal Admin */
@@ -193,12 +197,13 @@
       padding: 25px;
       border-radius: 12px;
       border: 1px solid #e2a21e;
-      box-shadow: 0 0 20px rgba(226, 162, 30, 0.2);
+      box-shadow: 0 0 25px rgba(226, 162, 30, 0.4);
     }
 
     .pin-auth-box h3 {
       color: #f1c40f;
       margin-bottom: 15px;
+      text-shadow: 0 0 10px rgba(241, 196, 15, 0.8);
     }
 
     /* Admin Jugadores */
@@ -260,6 +265,7 @@
       margin-bottom: 10px;
       border-bottom: 1px solid #475569;
       padding-bottom: 5px;
+      text-shadow: 0 0 8px rgba(241, 196, 15, 0.6);
     }
 
     .checklist-item {
@@ -292,10 +298,11 @@
       padding: 15px;
       border-radius: 8px;
       margin-bottom: 12px;
+      box-shadow: 0 0 12px rgba(234, 179, 8, 0.3);
     }
 
-    .btn-accept { background: #3b82f6; color:#fff; border:none; padding: 6px 14px; border-radius: 5px; cursor: pointer; font-weight: bold; }
-    .btn-reject { background: #ef4444; color:#fff; border:none; padding: 6px 14px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-left: 8px; }
+    .btn-accept { background: #3b82f6; color:#fff; border:none; padding: 6px 14px; border-radius: 5px; cursor: pointer; font-weight: bold; box-shadow: 0 0 8px rgba(59, 130, 246, 0.6); }
+    .btn-reject { background: #ef4444; color:#fff; border:none; padding: 6px 14px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-left: 8px; box-shadow: 0 0 8px rgba(239, 68, 68, 0.6); }
 
     /* Ranking Table */
     .ranking-table {
@@ -316,6 +323,7 @@
       text-transform: uppercase;
       font-size: 0.85rem;
       letter-spacing: 1px;
+      text-shadow: 0 0 8px rgba(241, 196, 15, 0.6);
     }
 
     .ranking-table tr {
@@ -334,9 +342,9 @@
       color: #fff;
     }
 
-    .rank-1 { background: #eab308; color: #000; }
-    .rank-2 { background: #94a3b8; color: #000; }
-    .rank-3 { background: #b45309; color: #fff; }
+    .rank-1 { background: #eab308; color: #000; box-shadow: 0 0 12px rgba(234, 179, 8, 0.9); }
+    .rank-2 { background: #94a3b8; color: #000; box-shadow: 0 0 10px rgba(148, 163, 184, 0.8); }
+    .rank-3 { background: #b45309; color: #fff; box-shadow: 0 0 10px rgba(180, 83, 9, 0.8); }
 
     .tag-tipo {
       display: inline-block;
@@ -346,8 +354,8 @@
       font-weight: bold;
       margin-left: 8px;
     }
-    .tag-normal { background: #3b82f6; color: #fff; }
-    .tag-torneo { background: #eab308; color: #000; }
+    .tag-normal { background: #3b82f6; color: #fff; box-shadow: 0 0 6px rgba(59, 130, 246, 0.6); }
+    .tag-torneo { background: #eab308; color: #000; box-shadow: 0 0 6px rgba(234, 179, 8, 0.8); }
 
     /* Torneo Bracket */
     .bracket-wrapper {
@@ -372,6 +380,7 @@
       text-transform: uppercase;
       font-size: 0.85rem;
       letter-spacing: 1px;
+      text-shadow: 0 0 8px rgba(241, 196, 15, 0.6);
     }
 
     .matchup {
@@ -380,7 +389,7 @@
       border-radius: 8px;
       margin: 10px 0;
       overflow: hidden;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
     }
 
     .matchup-header {
@@ -390,6 +399,7 @@
       color: #38bdf8;
       text-align: center;
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      text-shadow: 0 0 6px rgba(56, 189, 248, 0.6);
     }
 
     .matchup-player {
@@ -409,6 +419,7 @@
       background: rgba(34, 197, 94, 0.2);
       color: #4ade80;
       font-weight: bold;
+      text-shadow: 0 0 8px rgba(74, 222, 128, 0.6);
     }
 
     .score-badge {
@@ -439,7 +450,7 @@
     <button class="nav-btn" onclick="switchTab('reportar', this)">Reportar Partida</button>
     <button class="nav-btn" onclick="switchTab('confirmaciones', this)">Confirmaciones Pendientes</button>
     <button class="nav-btn" onclick="switchTab('historico', this)">Histórico</button>
-    <button class="nav-btn" onclick="switchTab('registro', this)" style="border-color: #f1c40f; color: #f1c40f;">🔒 Admin Jugadores</button>
+    <button class="nav-btn" onclick="switchTab('registro', this)" style="border-color: #f1c40f; color: #f1c40f; text-shadow: 0 0 8px rgba(241,196,15,0.6);">🔒 Admin Jugadores</button>
   </nav>
 
   <main>
@@ -452,15 +463,15 @@
           <input type="password" id="adminPinInput" placeholder="Código PIN" style="text-align: center; font-size: 1.1rem; width: 160px;" onkeyup="if(event.key==='Enter') verifyAdminPin()">
           <button class="btn-action" onclick="verifyAdminPin()">Entrar</button>
         </div>
-        <p id="pinErrorMessage" style="color: #ef4444; font-size: 0.85rem; display: none; font-weight: bold;">Código incorrecto. Inténtalo de nuevo.</p>
+        <p id="pinErrorMessage" style="color: #ef4444; font-size: 0.85rem; display: none; font-weight: bold; text-shadow: 0 0 6px rgba(239,68,68,0.8);">Código incorrecto. Inténtalo de nuevo.</p>
       </div>
 
       <div id="adminPlayerPanel" style="display: none;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
           <h2 class="section-title" style="margin-bottom: 0;">Gestión de Jugadores (30 Participantes)</h2>
           <div>
-            <button class="btn-action" style="background: #ef4444; margin-right: 8px;" onclick="resetearHistorico()">🗑️ Borrar Histórico</button>
-            <button class="btn-action" style="background: #64748b;" onclick="lockAdminPanel()">Bloquear Acceso</button>
+            <button class="btn-action" style="background: #ef4444; margin-right: 8px; box-shadow: 0 0 10px rgba(239,68,68,0.6);" onclick="resetearHistorico()">🗑️ Borrar Histórico</button>
+            <button class="btn-action" style="background: #64748b; box-shadow: 0 0 8px rgba(100,116,139,0.6);" onclick="lockAdminPanel()">Bloquear Acceso</button>
           </div>
         </div>
         <p style="color: #94a3b8; margin-bottom: 15px;">Configura el nombre y activa/desactiva los jugadores para definir quiénes participan en el Torneo del Mes.</p>
@@ -496,7 +507,7 @@
       </div>
 
       <div style="margin-top: 20px; background: rgba(30, 41, 59, 0.7); padding: 15px; border-radius: 8px;">
-        <label style="color:#f1c40f; font-weight:bold; display:block; margin-bottom:8px;">Marcador (Partidas mín. 1, máx. 5):</label>
+        <label style="color:#f1c40f; font-weight:bold; display:block; margin-bottom:8px; text-shadow:0 0 6px rgba(241,196,15,0.6);">Marcador (Partidas mín. 1, máx. 5):</label>
         <div style="display:flex; gap:15px; align-items:center;">
           <span>Manos Ganador: <input type="number" id="winnerScore" min="1" max="5" value="3" style="width:60px;"></span>
           <span>Manos Perdedor: <input type="number" id="loserScore" min="1" max="5" value="1" style="width:60px;"></span>
@@ -562,7 +573,6 @@
     const ADMIN_PIN = "19960201";
     let isAdminUnlocked = false;
 
-    // Inicialización de 30 Jugadores con estado 'active' por defecto
     let players = Array.from({ length: 30 }, (_, i) => ({
       id: i + 1,
       defaultLabel: `Jugador ${i + 1}`,
@@ -570,7 +580,6 @@
       active: true
     }));
 
-    // Cargar datos guardados desde localStorage
     const savedData = JSON.parse(localStorage.getItem('brawlhalla_players_data'));
     if (savedData && savedData.length === 30) {
       players = savedData;
@@ -578,7 +587,6 @@
 
     let pendingMatches = [];
 
-    // Cambiar de pestaña
     function switchTab(tabId, btnElement) {
       document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
       document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
@@ -586,7 +594,6 @@
       if (btnElement) btnElement.classList.add('active');
     }
 
-    // Verificar PIN Admin
     function verifyAdminPin() {
       const inputPin = document.getElementById('adminPinInput').value;
       const errorMsg = document.getElementById('pinErrorMessage');
@@ -609,7 +616,6 @@
       document.getElementById('adminPlayerPanel').style.display = 'none';
     }
 
-    // Borrado masivo o por filtro de mes en Admin
     function resetearHistorico() {
       const opcion = prompt("Selecciona una opción de borrado:\n\n1: Borrar SOLO las partidas del mes seleccionado en el filtro\n2: Borrar TODO el historial de partidas completas\n\n(Escribe 1 o 2 y presiona Aceptar):");
 
@@ -635,7 +641,6 @@
       }
     }
 
-    // Guardar cambios en localStorage
     function savePlayersData() {
       localStorage.setItem('brawlhalla_players_data', JSON.stringify(players));
       renderChecklists();
@@ -643,7 +648,6 @@
       renderBracket();
     }
 
-    // Renderizar Configuración Admin
     function renderPlayerInputs() {
       const container = document.getElementById('playersContainer');
       container.innerHTML = '';
@@ -673,7 +677,6 @@
       renderPlayerInputs();
     }
 
-    // Renderizar Checklists de Jugadores para Reportar
     function renderChecklists() {
       const winnerContainer = document.getElementById('winnerChecklist');
       const loserContainer = document.getElementById('loserChecklist');
@@ -686,7 +689,6 @@
         const disabledAttr = !p.active ? 'disabled' : '';
         const statusText = !p.active ? ' <i style="color:#ef4444;">(Inactivo)</i>' : '';
 
-        // Ganador
         const itemW = document.createElement('label');
         itemW.className = `checklist-item ${disabledClass}`;
         itemW.innerHTML = `
@@ -695,7 +697,6 @@
         `;
         winnerContainer.appendChild(itemW);
 
-        // Perdedor
         const itemL = document.createElement('label');
         itemL.className = `checklist-item ${disabledClass}`;
         itemL.innerHTML = `
@@ -706,7 +707,6 @@
       });
     }
 
-    // Enviar Resultado
     function submitMatchResult() {
       const winnerRadio = document.querySelector('input[name="winnerRadio"]:checked');
       const loserRadio = document.querySelector('input[name="loserRadio"]:checked');
@@ -746,7 +746,6 @@
       alert(`Resultado [${typeVal}] enviado para ${monthVal}. Requiere confirmación por ${match.loser}.`);
     }
 
-    // Confirmaciones Pendientes
     function renderPending() {
       const container = document.getElementById('pendingContainer');
       container.innerHTML = '';
@@ -794,7 +793,6 @@
       renderPending();
     }
 
-    // Borrar partida individual por ID
     function deleteSingleMatch(matchId) {
       if (!confirm("¿Deseas borrar esta partida específica del registro?")) return;
 
@@ -809,7 +807,6 @@
       renderHistory();
     }
 
-    // Renderizar Ranking (Muestra a todos los jugadores, cada mano otorga 1 punto)
     function renderRanking() {
       const selectedMonth = document.getElementById('rankingMonthFilter').value;
       const monthKey = `brawlhalla_history_${selectedMonth}`;
@@ -826,11 +823,11 @@
 
         stats[m.winner].wins += 1;
         stats[m.winner].played += 1;
-        stats[m.winner].points += m.winnerScore; // 1 punto por cada mano ganada
+        stats[m.winner].points += m.winnerScore;
 
         stats[m.loser].losses += 1;
         stats[m.loser].played += 1;
-        stats[m.loser].points += m.loserScore; // 1 punto por cada mano ganada por el perdedor
+        stats[m.loser].points += m.loserScore;
       });
 
       const sorted = Object.values(stats).sort((a, b) => b.points - a.points || b.wins - a.wins);
@@ -846,16 +843,15 @@
         tr.innerHTML = `
           <td><span class="badge-rank ${rankClass}">${idx + 1}</span></td>
           <td style="font-weight: 600;">${p.name}${inactivoLabel}</td>
-          <td style="color: #f1c40f; font-weight: bold;">${p.points} pts</td>
+          <td style="color: #f1c40f; font-weight: bold; text-shadow: 0 0 6px rgba(241,196,15,0.6);">${p.points} pts</td>
           <td>${p.played}</td>
-          <td style="color: #4ade80;">${p.wins}</td>
-          <td style="color: #f87171;">${p.losses}</td>
+          <td style="color: #4ade80; text-shadow: 0 0 6px rgba(74,222,128,0.6);">${p.wins}</td>
+          <td style="color: #f87171; text-shadow: 0 0 6px rgba(248,113,113,0.6);">${p.losses}</td>
         `;
         tbody.appendChild(tr);
       });
     }
 
-    // Renderizar Torneo (SOLO JUGADORES ACTIVOS)
     function renderBracket() {
       const container = document.getElementById('bracketContainer');
       container.innerHTML = '';
@@ -863,7 +859,7 @@
       const activePlayers = players.filter(p => p.active);
 
       if (activePlayers.length < 2) {
-        container.innerHTML = '<p style="color:#f87171; padding:15px;">Se necesitan al menos 2 jugadores ACTIVOS para armar el torneo.</p>';
+        container.innerHTML = '<p style="color:#f87171; padding:15px; text-shadow:0 0 6px rgba(239,68,68,0.6);">Se necesitan al menos 2 jugadores ACTIVOS para armar el torneo.</p>';
         return;
       }
 
@@ -930,7 +926,6 @@
       });
     }
 
-    // Renderizar Histórico
     function renderHistory() {
       const selectedMonth = document.getElementById('rankingMonthFilter').value;
       const monthKey = `brawlhalla_history_${selectedMonth}`;
@@ -959,7 +954,6 @@
       });
     }
 
-    // Inicializar elementos de la interfaz al cargar
     renderChecklists();
     renderRanking();
     renderBracket();
