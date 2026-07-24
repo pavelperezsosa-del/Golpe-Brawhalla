@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Golpe - Brawlhalla</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Orbitron:wght@800;900&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    body, html {
+      height: 100%;
+      color: #ffffff;
+      overflow-x: hidden;
+      background-color: #0b0c10;
+    }
+
+    /* Fondo Fullscreen difuminado y oscurecido un 50% */
+    .bg-image {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: #0b0c10;
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-attachment: fixed;
+      z-index: -1;
+      transition: background-image 0.3s ease;
+    }
+
+    .bg-image::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(11, 12, 16, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: -1;
+    }
+
+    .bg-picker-container {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      z-index: 100;
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-upload-bg {
+      background: rgba(15, 23, 42, 0.85);
+      color: #f1c40f;
+      border: 1px solid rgba(245, 158, 11, 0.6);
+      padding: 8px 14px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      border-radius: 6px;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    }
+
+    .btn-upload-bg:hover {
+      background: #f59e0b;
+      color: #000;
+      box-shadow: 0 0 15px rgba(245, 158, 11, 0.8);
+    }
+
+    /* Encabezado Principal */
+    header {
+      text-align: center;
+      padding: 30px 10px 20px 10px;
+      background: rgba(11, 12, 16, 0.6);
+      border-bottom: 2px solid rgba(245, 158, 11, 0.4);
+      box-shadow: 0 4px 25px rgba(0,0,0,0.6);
+      backdrop-filter: blur(10px);
+      position: relative;
+    }
+
+    header h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 3.2rem;
+      font-weight: 900;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      background: linear-gradient(180deg, #ffffff 0%, #facc15 50%, #d97706 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 3px 10px rgba(0,0,0,0.9));
+    }
+
+    /* Navegación */
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+
+    .nav-btn {
+      background: rgba(15, 23, 42, 0.65);
+      color: #e2e8f0;
+      border: 1px solid rgba(59, 130, 246, 0.6);
+      padding: 10px 20px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      backdrop-filter: blur(8px);
+    }
+
+    .nav-btn:hover {
+      background: rgba(245, 158, 11, 0.9);
+      color: #000000;
+      border-color: #fef08a;
+      box-shadow: 0 0 18px rgba(245, 158, 11, 0.7);
+    }
+
+    .nav-btn.active {
+      background: rgba(234, 179, 8, 0.9);
+      color: #000000;
+      border-color: #ffffff;
+      box-shadow: 0 0 18px rgba(234, 179, 8, 0.8);
+    }
+
+    /* Contenedor Principal */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 15px;
+    }
+
+    /* Secciones */
+    .tab-content {
+      display: none;
+      background: rgba(15, 23, 42, 0.6);
+      border-radius: 12px;
+      padding: 25px;
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .section-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.8rem;
+      letter-spacing: 1px;
+      color: #38bdf8;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #38bdf8;
+      padding-bottom: 6px;
+      display: inline-block;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+    }
+
+    /* Filtros y Form Inputs */
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      background: rgba(30, 41, 59, 0.6);
+      padding: 12px 18px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(8px);
+      flex-wrap: wrap;
+    }
+
+    .filter-bar label { color: #f1c40f; font-weight: 700; }
+
+    select, input[type="month"], input[type="text"], input[type="number"], input[type="password"] {
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(15, 23, 42, 0.8);
+      color: #ffffff;
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    .btn-action {
+      background: #22c55e;
+      color: #ffffff;
+      padding: 9px 18px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .btn-action:hover { background: #16a34a; }
+    .btn-delete { background: #ef4444; color: #fff; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; }
+
+    /* Admin PIN */
+    .pin-auth-box {
+      max-width: 400px;
+      margin: 40px auto;
+      text-align: center;
+      background: rgba(30, 41, 59, 0.7);
+      padding: 25px;
+      border-radius: 12px;
+      border: 2px solid rgba(226, 162, 30, 0.6);
+      backdrop-filter: blur(10px);
+    }
+
+    .register-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 12px;
+      margin-top: 15px;
+    }
+
+    .player-card-input {
+      background: rgba(30, 41, 59, 0.55);
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .player-card-input span { color: #f1c40f; font-weight: bold; }
+    .select-status { padding: 6px; font-size: 0.85rem; border-radius: 4px; }
+    .status-si { color: #22c55e; } .status-no { color: #ef4444; }
+
+    /* Listas de Selección */
+    .match-setup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media (max-width: 768px) { .match-setup-grid { grid-template-columns: 1fr; } }
+
+    .checklist-box {
+      background: rgba(30, 41, 59, 0.55);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      padding: 15px;
+      max-height: 380px;
+      overflow-y: auto;
+    }
+
+    .checklist-title { font-family: 'Orbitron', sans-serif; font-size: 1.1rem; color: #f1c40f; margin-bottom: 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 5px; }
+    .checklist-item { display: flex; align-items: center; gap: 10px; padding: 6px 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer; }
+    .checklist-item.disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* Tabla Ranking */
+    .ranking-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      background: rgba(15, 23, 42, 0.45);
+      border-radius: 8px;
+      overflow: hidden;
+      backdrop-filter: blur(8px);
+    }
+
+    .ranking-table th, .ranking-table td { padding: 12px 16px; text-align: left; }
+    .ranking-table th { background: rgba(30, 41, 59, 0.8); color: #f1c40f; border-bottom: 2px solid rgba(255, 255, 255, 0.15); text-transform: uppercase; font-size: 0.85rem; }
+    .ranking-table tr { border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+
+    .badge-rank { display: inline-block; width: 28px; height: 28px; line-height: 28px; text-align: center; border-radius: 50%; background: #334155; color: #fff; font-weight: bold; }
+    .rank-1 { background: #eab308; color: #000; }
+    .rank-2 { background: #94a3b8; color: #000; }
+    .rank-3 { background: #b45309; color: #fff; }
+
+    /* Estilos de Ramificación del Torneo */
+    .bracket-wrapper { 
+      display: flex; 
+      gap: 30px; 
+      overflow-x: auto; 
+      padding: 20px 10px; 
+      align-items: stretch;
+    }
+
+    .bracket-round { 
+      display: flex; 
+      flex-direction: column; 
+      justify-content: space-around; 
+      min-width: 240px; 
+    }
+
+    .round-title { 
+      text-align: center; 
+      font-family: 'Orbitron', sans-serif; 
+      font-size: 1.1rem; 
+      color: #f1c40f; 
+      margin-bottom: 15px; 
+      background: rgba(30, 41, 59, 0.7);
+      padding: 6px;
+      border-radius: 6px;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .matchup { 
+      background: rgba(30, 41, 59, 0.75); 
+      border: 1px solid rgba(255, 255, 255, 0.15); 
+      border-radius: 8px; 
+      margin: 12px 0; 
+      overflow: hidden; 
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    .matchup-header { 
+      background: rgba(15, 23, 42, 0.85); 
+      padding: 4px 10px; 
+      font-size: 0.75rem; 
+      color: #38bdf8; 
+      text-align: center; 
+      font-weight: bold;
+    }
+
+    .matchup-player { 
+      padding: 10px 12px; 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      font-size: 0.88rem; 
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05); 
+    }
+
+    .matchup-player.placeholder {
+      color: #64748b;
+      font-style: italic;
+    }
+
+    .score-badge { 
+      background: rgba(15, 23, 42, 0.9); 
+      border: 1px solid rgba(255, 255, 255, 0.2); 
+      padding: 2px 8px; 
+      border-radius: 4px; 
+      color: #f1c40f; 
+      font-weight: bold; 
+    }
+
+    /* Histórico de Torneos (Podios Top 3) */
+    .podium-card {
+      background: rgba(30, 41, 59, 0.65);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 15px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    }
+    .podium-header {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.1rem;
+      color: #f1c40f;
+      margin-bottom: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding-bottom: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .podium-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .podium-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.5);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+
+    /* Histórico Partidas */
+    .history-list { list-style: none; margin-top: 15px; }
+    .history-item { background: rgba(15, 23, 42, 0.6); padding: 10px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); display: flex; justify-content: space-between; align-items: center; backdrop-filter: blur(6px); border-radius: 6px; margin-bottom: 6px; }
+  </style>
+</head>
+<body>
+
+  <!-- DIV para Fondo Fullscreen -->
+  <div class="bg-image" id="bgImage"></div>
+
+  <header>
+    <div class="bg-picker-container">
+      <button class="btn-upload-bg" onclick="document.getElementById('fileInputBg').click()">📁 Subir Imagen Local</button>
+      <button class="btn-upload-bg" onclick="setBgByUrl()">🔗 Pegar Enlace URL</button>
+      <input type="file" id="fileInputBg" accept="image/*" style="display: none;" onchange="uploadLocalBg(event)">
+    </div>
+    <h1>Golpe - Brawlhalla</h1>
+  </header>
+
+  <nav>
+    <button class="nav-btn active" onclick="switchTab('ranking', this)">Vista 1: Ranking (Mensual)</button>
+    <button class="nav-btn" onclick="switchTab('torneo', this)">Vista 2: Torneo (5 Manos)</button>
+    <button class="nav-btn" onclick="switchTab('reportar', this)">Reportar Partida</button>
+    <button class="nav-btn" onclick="switchTab('confirmaciones', this)">Confirmaciones Pendientes</button>
+    <button class="nav-btn" onclick="switchTab('historico', this)">Histórico</button>
+    <button class="nav-btn" onclick="switchTab('registro', this)" style="border-color: #f1c40f; color: #f1c40f;">🔒 Admin Jugadores</button>
+  </nav>
+
+  <main>
+    <!-- VISTA 0: ADMIN Y REGISTRO -->
+    <section id="registro" class="tab-content">
+      <div id="pinAuthContainer" class="pin-auth-box">
+        <h3>Acceso Restringido (Administrador)</h3>
+        <p style="color: #cbd5e1; font-size: 0.9rem; margin-bottom: 15px;">Ingresa el código PIN para administrar los 30 jugadores:</p>
+        <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 10px;">
+          <input type="password" id="adminPinInput" placeholder="Código PIN" style="text-align: center; font-size: 1.1rem; width: 160px;" onkeyup="if(event.key==='Enter') verifyAdminPin()">
+          <button class="btn-action" onclick="verifyAdminPin()">Entrar</button>
+        </div>
+        <p id="pinErrorMessage" style="color: #ef4444; font-size: 0.85rem; display: none;">Código incorrecto.</p>
+      </div>
+
+      <div id="adminPlayerPanel" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+          <h2 class="section-title" style="margin-bottom: 0;">Gestión de Jugadores (30 Participantes)</h2>
+          <div>
+            <button class="btn-action" style="background: #ef4444; margin-right: 8px;" onclick="resetearHistorico()">🗑️ Borrar Histórico</button>
+            <button class="btn-action" style="background: #64748b;" onclick="lockAdminPanel()">Bloquear Acceso</button>
+          </div>
+        </div>
+        <div class="register-container" id="playersContainer"></div>
+      </div>
+    </section>
+
+    <!-- REPORTAR PARTIDA -->
+    <section id="reportar" class="tab-content">
+      <h2 class="section-title">Ingresar Resultado de Partida</h2>
+      
+      <div class="filter-bar">
+        <label for="matchType">Tipo de Partida:</label>
+        <select id="matchType">
+          <option value="Normal">Normal (Solo Ranking)</option>
+          <option value="Torneo">Torneo (Ranking + Torneo)</option>
+        </select>
+
+        <label for="matchMonth" style="margin-left: 15px;">Mes / Año de la Partida:</label>
+        <input type="month" id="matchMonth" value="2026-07">
+      </div>
+
+      <div class="match-setup-grid">
+        <div class="checklist-box">
+          <div class="checklist-title">Seleccionar GANADOR:</div>
+          <div id="winnerChecklist"></div>
+        </div>
+
+        <div class="checklist-box">
+          <div class="checklist-title">Seleccionar PERDEDOR:</div>
+          <div id="loserChecklist"></div>
+        </div>
+      </div>
+
+      <div style="margin-top: 20px; background: rgba(30, 41, 59, 0.55); padding: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+        <label style="color:#f1c40f; display:block; margin-bottom:8px; font-weight:bold;">Marcador (Manos Ganadas de 5 posibles):</label>
+        <div style="display:flex; gap:15px; align-items:center;">
+          <span>Manos Ganador: <input type="number" id="winnerScore" min="3" max="5" value="3" style="width:60px;"></span>
+          <span>Manos Perdedor: <input type="number" id="loserScore" min="0" max="2" value="1" style="width:60px;"></span>
+        </div>
+      </div>
+
+      <button class="btn-action" style="margin-top:15px; width:100%; padding:12px; font-size:1rem;" onclick="submitMatchResult()">Enviar para Validación Doble</button>
+    </section>
+
+    <!-- CONFIRMACIONES -->
+    <section id="confirmaciones" class="tab-content">
+      <h2 class="section-title">Validación Doble de Resultados</h2>
+      <div id="pendingContainer"></div>
+    </section>
+
+    <!-- RANKING -->
+    <section id="ranking" class="tab-content active">
+      <h2 class="section-title">Tabla de Clasificación por Mes</h2>
+      
+      <div class="filter-bar">
+        <label for="rankingMonthFilter">Filtrar Ranking por Mes/Año:</label>
+        <input type="month" id="rankingMonthFilter" value="2026-07" onchange="renderRanking(); renderHistory();">
+      </div>
+
+      <table class="ranking-table">
+        <thead>
+          <tr>
+            <th>Posición</th>
+            <th>Jugador</th>
+            <th>Puntos Ranking</th>
+            <th>Partidas Jugadas</th>
+            <th>Victorias</th>
+            <th>Derrotas</th>
+          </tr>
+        </thead>
+        <tbody id="rankingTableBody"></tbody>
+      </table>
+    </section>
+
+    <!-- TORNEO BRACKET -->
+    <section id="torneo" class="tab-content">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;">
+        <h2 class="section-title" style="margin-bottom: 0;">Torneo Mensual (Ramificación Completa)</h2>
+        <button class="btn-action" style="background: #f59e0b; color: #000; font-weight: 900;" onclick="lanzarNuevoTorneoAdmin()">🚀 Lanzar Nuevo Torneo</button>
+      </div>
+
+      <div class="filter-bar">
+        <label for="bracketMonthFilter">Seleccionar Edición del Torneo:</label>
+        <input type="month" id="bracketMonthFilter" value="2026-07" onchange="renderBracket()">
+      </div>
+
+      <div class="bracket-wrapper" id="bracketContainer"></div>
+    </section>
+
+    <!-- HISTÓRICO -->
+    <section id="historico" class="tab-content">
+      <h2 class="section-title">Histórico de Podios (Top 3 por Torneo)</h2>
+      <div id="podiumsContainer" style="margin-bottom: 30px;"></div>
+
+      <h2 class="section-title">Histórico de Partidas Registradas</h2>
+      <ul class="history-list" id="historyList"></ul>
+    </section>
+  </main>
+
+  <script>
+    const ADMIN_PIN = "007009";
+    let isAdminUnlocked = false;
+
+    // APLICAR IMAGEN DE FONDO FULLSCREEN
+    function applyBgStyle(imgSrc) {
+      const bgDiv = document.getElementById('bgImage');
+      bgDiv.style.backgroundImage = `url('${imgSrc}')`;
+    }
+
+    // SUBIR IMAGEN LOCAL
+    function uploadLocalBg(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const base64Img = e.target.result;
+          applyBgStyle(base64Img);
+          try {
+            localStorage.setItem('brawlhalla_custom_url', base64Img);
+          } catch(err) {
+            console.warn("La imagen es muy pesada para guardarse en el almacenamiento local.");
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    // ENLACE URL
+    function setBgByUrl() {
+      const url = prompt("Pega el enlace (URL directa) de la imagen:\nNota: Asegúrate de que termine en .jpg, .png o .webp");
+      if (url && url.trim() !== '') {
+        const cleanUrl = url.trim();
+        applyBgStyle(cleanUrl);
+        localStorage.setItem('brawlhalla_custom_url', cleanUrl);
+      }
+    }
+
+    // CARGAR FONDO GUARDADO
+    const savedUrl = localStorage.getItem('brawlhalla_custom_url');
+    if (savedUrl) {
+      applyBgStyle(savedUrl);
+    }
+
+    let players = Array.from({ length: 30 }, (_, i) => ({
+      id: i + 1,
+      defaultLabel: `Jugador ${i + 1}`,
+      name: `Jugador ${i + 1}`,
+      active: true
+    }));
+
+    const savedData = JSON.parse(localStorage.getItem('brawlhalla_players_data'));
+    if (savedData && savedData.length === 30) {
+      players = savedData;
+    }
+
+    let pendingMatches = [];
+
+    function verifyAdminPin() {
+      const inputPin = document.getElementById('adminPinInput').value;
+      const errorMsg = document.getElementById('pinErrorMessage');
+      if (inputPin === ADMIN_PIN) {
+        isAdminUnlocked = true;
+        errorMsg.style.display = 'none';
+        document.getElementById('pinAuthContainer').style.display = 'none';
+        document.getElementById('adminPlayerPanel').style.display = 'block';
+        document.getElementById('adminPinInput').value = '';
+        renderPlayerInputs();
+      } else {
+        errorMsg.style.display = 'block';
+      }
+    }
+
+    function lockAdminPanel() {
+      isAdminUnlocked = false;
+      document.getElementById('pinAuthContainer').style.display = 'block';
+      document.getElementById('adminPlayerPanel').style.display = 'none';
+    }
+
+    // LANZAR NUEVO TORNEO (GUARDA PODIO TOP 3 Y GENERA NUEVO BRACKET SIN BORRAR RANKING)
+    function lanzarNuevoTorneoAdmin() {
+      const pinIngresado = prompt("Acceso Administrativo Requerido\nIngresa el PIN de Administrador (007009) para lanzar un nuevo torneo:");
+      if (pinIngresado === null) return;
+
+      if (pinIngresado === ADMIN_PIN) {
+        const mesTorneo = document.getElementById('bracketMonthFilter').value;
+        
+        const champ1 = prompt(`Torneo [${mesTorneo}]\nIngresa el nombre del CAMPEÓN (1er Lugar):`, "Jugador 1");
+        if (!champ1) return;
+        const champ2 = prompt(`Torneo [${mesTorneo}]\nIngresa el nombre del 2do Lugar:`, "Jugador 2");
+        if (!champ2) return;
+        const champ3 = prompt(`Torneo [${mesTorneo}]\nIngresa el nombre del 3er Lugar:`, "Jugador 3");
+        if (!champ3) return;
+
+        const podioData = {
+          month: mesTorneo,
+          timestamp: Date.now(),
+          top3: [
+            { pos: 1, name: champ1 },
+            { pos: 2, name: champ2 },
+            { pos: 3, name: champ3 }
+          ]
+        };
+
+        let savedPodiums = JSON.parse(localStorage.getItem('brawlhalla_tournaments_podiums')) || [];
+        savedPodiums = savedPodiums.filter(p => p.month !== mesTorneo);
+        savedPodiums.push(podioData);
+        localStorage.setItem('brawlhalla_tournaments_podiums', JSON.stringify(savedPodiums));
+
+        renderBracket();
+        renderHistory();
+        alert(`¡Nuevo torneo para el mes ${mesTorneo} lanzado con éxito!\nEl Top 3 ha sido registrado en el histórico de podios sin afectar el ranking general.`);
+      } else {
+        alert("Código PIN incorrecto. No se pudo autorizar el lanzamiento del torneo.");
+      }
+    }
+
+    function resetearHistorico() {
+      const opcion = prompt("1: Borrar SOLO las partidas del mes seleccionado\n2: Borrar TODO el historial de partidas y podios");
+      if (opcion === "1") {
+        const selectedMonth = document.getElementById('rankingMonthFilter').value;
+        localStorage.removeItem(`brawlhalla_history_${selectedMonth}`);
+        renderRanking(); renderHistory(); renderBracket();
+      } else if (opcion === "2") {
+        Object.keys(localStorage).forEach(key => { 
+          if (key.startsWith('brawlhalla_history_') || key === 'brawlhalla_tournaments_podiums') localStorage.removeItem(key); 
+        });
+        renderRanking(); renderHistory(); renderBracket();
+      }
+    }
+
+    function savePlayersData() {
+      localStorage.setItem('brawlhalla_players_data', JSON.stringify(players));
+      renderChecklists(); renderRanking(); renderBracket();
+    }
+
+    function renderPlayerInputs() {
+      const container = document.getElementById('playersContainer');
+      container.innerHTML = '';
+      players.forEach((player, index) => {
+        const div = document.createElement('div');
+        div.className = 'player-card-input';
+        div.innerHTML = `
+          <span>#${player.id}:</span>
+          <input type="text" value="${player.name}" placeholder="${player.defaultLabel}" style="flex:1;" oninput="updatePlayerName(${index}, this.value)">
+          <select class="select-status ${player.active ? 'status-si' : 'status-no'}" onchange="updatePlayerStatus(${index}, this.value)">
+            <option value="si" ${player.active ? 'selected' : ''}>Activo</option>
+            <option value="no" ${!player.active ? 'selected' : ''}>Inactivo</option>
+          </select>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function updatePlayerName(index, newName) {
+      players[index].name = newName.trim() !== '' ? newName : players[index].defaultLabel;
+      savePlayersData();
+    }
+
+    function updatePlayerStatus(index, status) {
+      players[index].active = status === 'si';
+      savePlayersData();
+      renderPlayerInputs();
+    }
+
+    function renderChecklists() {
+      const winnerContainer = document.getElementById('winnerChecklist');
+      const loserContainer = document.getElementById('loserChecklist');
+      winnerContainer.innerHTML = ''; loserContainer.innerHTML = '';
+
+      players.forEach(p => {
+        const disabledClass = !p.active ? 'disabled' : '';
+        const disabledAttr = !p.active ? 'disabled' : '';
+
+        const itemW = document.createElement('label');
+        itemW.className = `checklist-item ${disabledClass}`;
+        itemW.innerHTML = `<input type="radio" name="winnerRadio" value="${p.name}" ${disabledAttr}> <span>#${p.id} - <strong>${p.name}</strong></span>`;
+        winnerContainer.appendChild(itemW);
+
+        const itemL = document.createElement('label');
+        itemL.className = `checklist-item ${disabledClass}`;
+        itemL.innerHTML = `<input type="radio" name="loserRadio" value="${p.name}" ${disabledAttr}> <span>#${p.id} - <strong>${p.name}</strong></span>`;
+        loserContainer.appendChild(itemL);
+      });
+    }
+
+    function submitMatchResult() {
+      const winnerRadio = document.querySelector('input[name="winnerRadio"]:checked');
+      const loserRadio = document.querySelector('input[name="loserRadio"]:checked');
+      if (!winnerRadio || !loserRadio || winnerRadio.value === loserRadio.value) {
+        alert("Selecciona un ganador y perdedor válidos."); return;
+      }
+
+      const match = {
+        id: Date.now(),
+        type: document.getElementById('matchType').value,
+        winner: winnerRadio.value,
+        loser: loserRadio.value,
+        winnerScore: parseInt(document.getElementById('winnerScore').value),
+        loserScore: parseInt(document.getElementById('loserScore').value),
+        month: document.getElementById('matchMonth').value,
+        date: new Date().toLocaleDateString()
+      };
+
+      pendingMatches.push(match);
+      renderPending();
+      alert("Resultado enviado para confirmación.");
+    }
+
+    function renderPending() {
+      const container = document.getElementById('pendingContainer');
+      container.innerHTML = pendingMatches.length === 0 ? '<p style="color:#cbd5e1;">Sin confirmaciones pendientes.</p>' : '';
+
+      pendingMatches.forEach(match => {
+        const card = document.createElement('div');
+        card.style.cssText = "background:rgba(30, 41, 59, 0.7); border:1px solid #eab308; padding:15px; border-radius:8px; margin-bottom:12px;";
+        card.innerHTML = `
+          <p><strong>[${match.type}]</strong> <strong>${match.winner}</strong> (${match.winnerScore} - ${match.loserScore}) vs <strong>${match.loser}</strong></p>
+          <button class="btn-action" style="margin-top:8px;" onclick="confirmMatch(${match.id}, true)">Aceptar</button>
+          <button class="btn-delete" style="margin-left:8px;" onclick="confirmMatch(${match.id}, false)">Rechazar</button>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function confirmMatch(matchId, accepted) {
+      const matchIndex = pendingMatches.findIndex(m => m.id === matchId);
+      if (matchIndex === -1) return;
+      const match = pendingMatches[matchIndex];
+
+      if (accepted) {
+        const monthKey = `brawlhalla_history_${match.month}`;
+        let historyData = JSON.parse(localStorage.getItem(monthKey)) || [];
+        historyData.push(match);
+        localStorage.setItem(monthKey, JSON.stringify(historyData));
+        renderRanking(); renderHistory(); renderBracket();
+      }
+      pendingMatches.splice(matchIndex, 1);
+      renderPending();
+    }
+
+    function renderRanking() {
+      const selectedMonth = document.getElementById('rankingMonthFilter').value;
+      const historyData = JSON.parse(localStorage.getItem(`brawlhalla_history_${selectedMonth}`)) || [];
+      const stats = {};
+
+      players.forEach(p => { stats[p.name] = { name: p.name, points: 0, played: 0, wins: 0, losses: 0, active: p.active }; });
+
+      historyData.forEach(m => {
+        if (!stats[m.winner]) stats[m.winner] = { name: m.winner, points: 0, played: 0, wins: 0, losses: 0, active: true };
+        if (!stats[m.loser]) stats[m.loser] = { name: m.loser, points: 0, played: 0, wins: 0, losses: 0, active: true };
+
+        stats[m.winner].wins++; stats[m.winner].played++; stats[m.winner].points += 3;
+        stats[m.loser].losses++; stats[m.loser].played++; stats[m.loser].points += 1;
+      });
+
+      const sorted = Object.values(stats).sort((a, b) => b.points - a.points || b.wins - a.wins);
+      const tbody = document.getElementById('rankingTableBody');
+      tbody.innerHTML = '';
+
+      sorted.forEach((p, idx) => {
+        const tr = document.createElement('tr');
+        let rankClass = idx === 0 ? 'rank-1' : idx === 1 ? 'rank-2' : idx === 2 ? 'rank-3' : '';
+        tr.innerHTML = `
+          <td><span class="badge-rank ${rankClass}">${idx + 1}</span></td>
+          <td style="font-weight: 600;">${p.name}</td>
+          <td style="color: #f1c40f; font-weight:bold;">${p.points} pts</td>
+          <td>${p.played}</td>
+          <td style="color: #4ade80;">${p.wins}</td>
+          <td style="color: #f87171;">${p.losses}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+      
+      return sorted; // Retorna la lista ordenada para usarla en el cruce del torneo
+    }
+
+    /* RENDERIZADO DEL ÁRBOL DE TORNEO (CRUCE 1° VS ÚLTIMO, 2° VS PENÚLTIMO, ETC.) */
+    function renderBracket() {
+      const container = document.getElementById('bracketContainer');
+      container.innerHTML = '';
+      
+      // Obtener el orden de jugadores según el ranking actual del mes seleccionado
+      const rankedList = renderRanking();
+      const activePlayers = rankedList.filter(p => {
+        const originalObj = players.find(pl => pl.name === p.name);
+        return originalObj && originalObj.active;
+      });
+
+      if (activePlayers.length < 2) {
+        container.innerHTML = '<p style="color:#f87171;">Se necesitan al menos 2 jugadores activos para generar la ramificación del torneo.</p>';
+        return;
+      }
+
+      let bracketSize = 2;
+      while (bracketSize < activePlayers.length) {
+        bracketSize *= 2;
+      }
+
+      // Rellenar con espacios vacíos (BYE) si faltan cupos para potencia de 2
+      let seededPlayers = [...activePlayers];
+      while (seededPlayers.length < bracketSize) {
+        seededPlayers.push(null);
+      }
+
+      // Crear emparejamientos: 1° vs Último, 2° vs Penúltimo, etc.
+      let firstRoundPairings = [];
+      let totalMatches = bracketSize / 2;
+      for (let i = 0; i < totalMatches; i++) {
+        let topPlayer = seededPlayers[i];
+        let bottomPlayer = seededPlayers[bracketSize - 1 - i];
+        firstRoundPairings.push({ p1: topPlayer, p2: bottomPlayer });
+      }
+
+      const getRoundTitle = (count) => {
+        if (count === 1) return "🏆 Gran Final";
+        if (count === 2) return "Semifinales";
+        if (count === 4) return "Cuartos de Final";
+        if (count === 8) return "Octavos de Final";
+        return `Ronda de ${count * 2}`;
+      };
+
+      let currentMatchesCount = totalMatches;
+      let roundIndex = 1;
+
+      while (currentMatchesCount >= 1) {
+        const roundDiv = document.createElement('div');
+        roundDiv.className = 'bracket-round';
+        
+        const roundTitle = getRoundTitle(currentMatchesCount);
+        roundDiv.innerHTML = `<div class="round-title">${roundTitle}</div>`;
+
+        for (let i = 0; i < currentMatchesCount; i++) {
+          let p1Name = "Por definir";
+          let p2Name = "Por definir";
+          let p1Class = "placeholder";
+          let p2Class = "placeholder";
+
+          if (roundIndex === 1) {
+            const matchPair = firstRoundPairings[i];
+            
+            if (matchPair.p1) { p1Name = matchPair.p1.name; p1Class = ""; }
+            else { p1Name = "BYE (Pase directo)"; }
+
+            if (matchPair.p2) { p2Name = matchPair.p2.name; p2Class = ""; }
+            else { p2Name = "BYE (Pase directo)"; }
+          }
+
+          const matchDiv = document.createElement('div');
+          matchDiv.className = 'matchup';
+          matchDiv.innerHTML = `
+            <div class="matchup-header">Mejor de 5</div>
+            <div class="matchup-player ${p1Class}"><span>${p1Name}</span><span class="score-badge">-</span></div>
+            <div class="matchup-player ${p2Class}"><span>${p2Name}</span><span class="score-badge">-</span></div>
+          `;
+          roundDiv.appendChild(matchDiv);
+        }
+
+        container.appendChild(roundDiv);
+        currentMatchesCount /= 2;
+        roundIndex++;
+      }
+    }
+
+    function renderHistory() {
+      const selectedMonth = document.getElementById('rankingMonthFilter').value;
+      
+      const podiumsContainer = document.getElementById('podiumsContainer');
+      const savedPodiums = JSON.parse(localStorage.getItem('brawlhalla_tournaments_podiums')) || [];
+      podiumsContainer.innerHTML = '';
+
+      if (savedPodiums.length === 0) {
+        podiumsContainer.innerHTML = '<p style="color:#cbd5e1; font-style:italic; margin-bottom:15px;">No hay torneos finalizados registrados todavía.</p>';
+      } else {
+        savedPodiums.sort((a,b) => b.timestamp - a.timestamp).forEach(podio => {
+          const card = document.createElement('div');
+          card.className = 'podium-card';
+          
+          let listHtml = '';
+          podio.top3.forEach(item => {
+            let icon = item.pos === 1 ? '🥇' : item.pos === 2 ? '🥈' : '🥉';
+            let colorStyle = item.pos === 1 ? 'color: #eab308; font-weight:bold;' : item.pos === 2 ? 'color: #94a3b8; font-weight:bold;' : 'color: #b45309; font-weight:bold;';
+            listHtml += `
+              <li class="podium-item">
+                <span>${icon} <strong>${item.pos}° Lugar</strong></span>
+                <span style="${colorStyle}">${item.name}</span>
+              </li>
+            `;
+          });
+
+          card.innerHTML = `
+            <div class="podium-header">
+              <span>🏆 Edición Torneo: ${podio.month}</span>
+              <span style="font-size:0.75rem; color:#94a3b8;">Registrado</span>
+            </div>
+            <ul class="podium-list">${listHtml}</ul>
+          `;
+          podiumsContainer.appendChild(card);
+        });
+      }
+
+      const historyData = JSON.parse(localStorage.getItem(`brawlhalla_history_${selectedMonth}`)) || [];
+      const list = document.getElementById('historyList');
+      list.innerHTML = '';
+
+      if (historyData.length === 0) {
+        list.innerHTML = '<li style="color:#cbd5e1;">Sin historial de partidas registrado en este mes.</li>';
+        return;
+      }
+
+      historyData.forEach(match => {
+        const li = document.createElement('li');
+        li.className = 'history-item';
+        li.innerHTML = `<span>🏆 <strong>${match.winner}</strong> (${match.winnerScore}) venció a <strong>${match.loser}</strong> (${match.loserScore})</span>`;
+        list.appendChild(li);
+      });
+    }
+
+    function switchTab(tabId, btn) {
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      if (btn) btn.classList.add('active');
+
+      if (tabId === 'ranking') renderRanking();
+      if (tabId === 'torneo') renderBracket();
+      if (tabId === 'reportar') renderChecklists();
+      if (tabId === 'confirmaciones') renderPending();
+      if (tabId === 'historico') renderHistory();
+    }
+
+    renderChecklists();
+    renderRanking();
+    renderBracket();
+  </script>
+</body>
+</html>
