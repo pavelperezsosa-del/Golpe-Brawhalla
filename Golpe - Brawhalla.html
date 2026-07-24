@@ -517,7 +517,7 @@
     <!-- TORNEO BRACKET -->
     <section id="torneo" class="tab-content">
       <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;">
-        <h2 class="section-title" style="margin-bottom: 0;">Torneo Mensual (Ramificación Completa)</h2>
+        <h2 class="section-title" style="margin-bottom: 0;">Torneo Mensual (Ramificación Completa - Top 15 Enfrentamientos)</h2>
         <button class="btn-action" style="background: #f59e0b; color: #000; font-weight: 900;" onclick="lanzarNuevoTorneoAdmin()">🚀 Lanzar Nuevo Torneo</button>
       </div>
 
@@ -813,15 +813,14 @@
         tbody.appendChild(tr);
       });
       
-      return sorted; // Retorna la lista ordenada para usarla en el cruce del torneo
+      return sorted;
     }
 
-    /* RENDERIZADO DEL ÁRBOL DE TORNEO (CRUCE 1° VS ÚLTIMO, 2° VS PENÚLTIMO, ETC.) */
+    /* RENDERIZADO DEL ÁRBOL DE TORNEO (HASTA 15 ENFRENTAMIENTOS: 1° vs 30°, 2° vs 29°, ... 15° vs 16°) */
     function renderBracket() {
       const container = document.getElementById('bracketContainer');
       container.innerHTML = '';
       
-      // Obtener el orden de jugadores según el ranking actual del mes seleccionado
       const rankedList = renderRanking();
       const activePlayers = rankedList.filter(p => {
         const originalObj = players.find(pl => pl.name === p.name);
@@ -833,74 +832,41 @@
         return;
       }
 
-      let bracketSize = 2;
-      while (bracketSize < activePlayers.length) {
-        bracketSize *= 2;
+      // Rellenar hasta completar 30 espacios lógicos si hay menos participantes activos (los faltantes serán "BYE")
+      let fullList = [...activePlayers];
+      while (fullList.length < 30) {
+        fullList.push(null);
       }
 
-      // Rellenar con espacios vacíos (BYE) si faltan cupos para potencia de 2
-      let seededPlayers = [...activePlayers];
-      while (seededPlayers.length < bracketSize) {
-        seededPlayers.push(null);
-      }
-
-      // Crear emparejamientos: 1° vs Último, 2° vs Penúltimo, etc.
+      // Generar exactamente 15 enfrentamientos de primera ronda: 1 vs 30, 2 vs 29, 3 vs 28, ..., 15 vs 16
       let firstRoundPairings = [];
-      let totalMatches = bracketSize / 2;
-      for (let i = 0; i < totalMatches; i++) {
-        let topPlayer = seededPlayers[i];
-        let bottomPlayer = seededPlayers[bracketSize - 1 - i];
+      for (let i = 0; i < 15; i++) {
+        let topPlayer = fullList[i];
+        let bottomPlayer = fullList[29 - i];
         firstRoundPairings.push({ p1: topPlayer, p2: bottomPlayer });
       }
 
-      const getRoundTitle = (count) => {
-        if (count === 1) return "🏆 Gran Final";
-        if (count === 2) return "Semifinales";
-        if (count === 4) return "Cuartos de Final";
-        if (count === 8) return "Octavos de Final";
-        return `Ronda de ${count * 2}`;
-      };
+      const roundDiv = document.createElement('div');
+      roundDiv.className = 'bracket-round';
+      roundDiv.innerHTML = `<div class="round-title">Primera Ronda (Top 15 Enfrentamientos)</div>`;
 
-      let currentMatchesCount = totalMatches;
-      let roundIndex = 1;
+      firstRoundPairings.forEach((matchPair, idx) => {
+        let p1Name = matchPair.p1 ? matchPair.p1.name : "BYE (Pase directo)";
+        let p2Name = matchPair.p2 ? matchPair.p2.name : "BYE (Pase directo)";
+        let p1Class = matchPair.p1 ? "" : "placeholder";
+        let p2Class = matchPair.p2 ? "" : "placeholder";
 
-      while (currentMatchesCount >= 1) {
-        const roundDiv = document.createElement('div');
-        roundDiv.className = 'bracket-round';
-        
-        const roundTitle = getRoundTitle(currentMatchesCount);
-        roundDiv.innerHTML = `<div class="round-title">${roundTitle}</div>`;
+        const matchDiv = document.createElement('div');
+        matchDiv.className = 'matchup';
+        matchDiv.innerHTML = `
+          <div class="matchup-header">Duelo #${idx + 1} (Mejor de 5)</div>
+          <div class="matchup-player ${p1Class}"><span>${p1Name}</span><span class="score-badge">-</span></div>
+          <div class="matchup-player ${p2Class}"><span>${p2Name}</span><span class="score-badge">-</span></div>
+        `;
+        roundDiv.appendChild(matchDiv);
+      });
 
-        for (let i = 0; i < currentMatchesCount; i++) {
-          let p1Name = "Por definir";
-          let p2Name = "Por definir";
-          let p1Class = "placeholder";
-          let p2Class = "placeholder";
-
-          if (roundIndex === 1) {
-            const matchPair = firstRoundPairings[i];
-            
-            if (matchPair.p1) { p1Name = matchPair.p1.name; p1Class = ""; }
-            else { p1Name = "BYE (Pase directo)"; }
-
-            if (matchPair.p2) { p2Name = matchPair.p2.name; p2Class = ""; }
-            else { p2Name = "BYE (Pase directo)"; }
-          }
-
-          const matchDiv = document.createElement('div');
-          matchDiv.className = 'matchup';
-          matchDiv.innerHTML = `
-            <div class="matchup-header">Mejor de 5</div>
-            <div class="matchup-player ${p1Class}"><span>${p1Name}</span><span class="score-badge">-</span></div>
-            <div class="matchup-player ${p2Class}"><span>${p2Name}</span><span class="score-badge">-</span></div>
-          `;
-          roundDiv.appendChild(matchDiv);
-        }
-
-        container.appendChild(roundDiv);
-        currentMatchesCount /= 2;
-        roundIndex++;
-      }
+      container.appendChild(roundDiv);
     }
 
     function renderHistory() {
